@@ -227,7 +227,7 @@ loadData()
       }
       &.top-border {
         &:before {
-          background: linear-gradient(33deg, #9a66ff 0%, #3651ec 100%);
+          background: linear-gradient(135deg, #00b173 0%, #009580 100%);
         }
       }
     }

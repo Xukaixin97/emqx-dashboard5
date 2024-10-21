@@ -143,7 +143,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { ComputedRef, defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'Metrics',
@@ -151,8 +151,7 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import type { ComputedRef, Ref } from 'vue'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref, Ref, computed } from 'vue'
 import { loadMetrics } from '@/api/common'
 import useI18nTl from '@/hooks/useI18nTl'
 import { NodeStatisticalData } from '@/types/dashboard'
@@ -275,7 +274,7 @@ onMounted(() => {
       }
       &.top-border.session {
         &:before {
-          background: #5d4eff;
+          background: #43934b;
         }
       }
       &.top-border.packets {
@@ -285,7 +284,7 @@ onMounted(() => {
       }
       &.top-border.messages {
         &:before {
-          background: #bf73ff;
+          background: #298933;
         }
       }
       &.top-border.bytes {

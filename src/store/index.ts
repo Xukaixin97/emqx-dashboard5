@@ -37,11 +37,13 @@ const getSyncOSTheme = () => {
 }
 
 const getLeftBarCollapse = () => {
-  const leftBarCollapse = localStorage.getItem('leftBarCollapse') || 'true'
-  if (leftBarCollapse === 'undefined') {
-    return true
-  }
-  return JSON.parse(leftBarCollapse)
+  // const leftBarCollapse = localStorage.getItem('leftBarCollapse') || 'true'
+  // if (leftBarCollapse === 'undefined') {
+  //   return true
+  // }
+  // return JSON.parse(leftBarCollapse)
+
+  return false
 }
 
 const getClientTableColumns = () => {

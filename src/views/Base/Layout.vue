@@ -5,7 +5,7 @@
         <img :src="appLogo" alt="emqx-logo" />
       </div>
       <left-bar></left-bar>
-      <div class="footer-menu" :style="{ width: leftBarCollapse ? '79px' : '199px' }">
+      <!-- <div class="footer-menu" :style="{ width: leftBarCollapse ? '79px' : '199px' }">
         <a
           class="footer-menu-item"
           @click="
@@ -17,7 +17,7 @@
           <i :class="['iconfont', 'icon-fold', leftBarCollapse ? 'rotate' : '']"></i>
           <EMQXVersion v-show="!leftBarCollapse" />
         </a>
-      </div>
+      </div> -->
     </el-aside>
     <el-container class="layout">
       <el-header :style="{ left: elMainStyle, height: 'auto' }">
@@ -313,11 +313,12 @@ $header-heigh: 60px;
   transition: all 0.3s;
   display: flex;
   align-items: center;
-  padding-left: 20px;
+  padding-left: 32px;
   img {
     max-width: initial;
     max-height: 100%;
-    height: 36px;
+    height: 60px;
+    margin-top:10px;
     transition: all 0.3s;
   }
 }

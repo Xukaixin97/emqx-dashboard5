@@ -2,7 +2,7 @@
   <div class="nav-header" :style="{ left: leftBarCollapse ? '201px' : '80px' }">
     <h1 class="header-title">{{ title }}</h1>
     <div class="pull-right">
-      <div class="quick-panel-enter" @click="openQuickPanel">
+      <!-- <div class="quick-panel-enter" @click="openQuickPanel">
         <div class="enter-hd">
           <el-icon :size="16"><Search /></el-icon>
           <span>{{ t('Base.quickFind') }}</span>
@@ -12,7 +12,7 @@
           <span class="icon-key" v-else>Ctrl</span>
           <span class="icon-key">K</span>
         </div>
-      </div>
+      </div> -->
       <el-button class="go-link" v-if="isEvaluationLicense" @click="routeToContactUs">
         {{ $t('Base.contactUs') }}<el-icon><right /></el-icon>
       </el-button>
@@ -26,7 +26,7 @@
         </div>
       </el-tooltip>
 
-      <el-tooltip
+      <!-- <el-tooltip
         effect="dark"
         :content="$t('components.help')"
         placement="bottom"
@@ -35,7 +35,7 @@
         <a href="javascript:;" @click="handleShowHelp" class="link-help">
           <i class="iconfont icon-question"></i>
         </a>
-      </el-tooltip>
+      </el-tooltip> -->
 
       <el-tooltip
         effect="dark"
@@ -77,7 +77,7 @@
 import { loadAlarm, logout as queryLogout } from '@/api/common'
 import { toLogin } from '@/router'
 import { useStore } from 'vuex'
-import { Right, Bell, Setting, Search } from '@element-plus/icons-vue'
+import { Right, Bell, Setting } from '@element-plus/icons-vue'
 import { ElNotification, ElMessageBox } from 'element-plus'
 import { computed, defineComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -95,7 +95,6 @@ export default defineComponent({
     Setting,
     Settings,
     Help,
-    Search,
   },
   props: {
     title: {
@@ -254,7 +253,8 @@ export default defineComponent({
   margin-top: 0;
   margin-bottom: 0;
   font-size: 22px;
-  color: #fff;
+  color: rgb(73, 71, 71);
+
 }
 
 .pull-right {
@@ -275,8 +275,8 @@ export default defineComponent({
   align-items: center;
   border-radius: 8px;
   border: 1px solid transparent;
-  background: #27353e;
-  color: #a7abb1;
+  background:white;
+  color:   #27353e;
   cursor: pointer;
   font-family: 'PingFang SC';
   &:hover {
@@ -291,7 +291,8 @@ export default defineComponent({
     font-size: 14px;
     .el-icon {
       margin-right: 10px;
-      color: #fff;
+      // color: #fff;
+      color:black ;
     }
   }
   .icon-key {
@@ -302,7 +303,9 @@ export default defineComponent({
     text-align: center;
     line-height: 1;
     font-size: 11px;
-    color: #fff;
+    // color: #fff;
+    color:black ;
+
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.14);
     &.is-cmd {
@@ -315,7 +318,8 @@ export default defineComponent({
   padding: 0 10px;
   transition: all 0.3s;
   cursor: pointer;
-  color: #fff;
+  // color: #fff;
+  color:black ;
 }
 
 .el-badge {
@@ -354,7 +358,9 @@ export default defineComponent({
 }
 .el-icon.bell,
 .el-icon.settings {
-  color: #fff;
+  // color: #fff;
+  color:black ;
+
   font-size: 21px;
   width: 24px;
   height: 24px;
@@ -362,7 +368,9 @@ export default defineComponent({
   top: 1px;
 }
 .icon-question {
-  color: #fff;
+  // color: #fff;
+  color:black ;
+
   font-size: 21px;
 }
 </style>

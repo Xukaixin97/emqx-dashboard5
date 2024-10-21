@@ -6,7 +6,7 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'RateChart',
+  name: 'RateChartMult',
 })
 </script>
 
@@ -28,7 +28,7 @@ import useEchartResize from '@/hooks/useEchartResize'
 const store = useStore()
 const { tl } = useI18nTl('Base')
 
-const createTooltip = (xAxis: string, val: number | undefined) => {
+const createTooltip = (xAxis: string, val: number | undefined, val2: number | undefined) => {
   const container = document.createElement('div')
   container.className = 'rate-chart-tooltip'
   if (val === undefined) {
@@ -37,22 +37,28 @@ const createTooltip = (xAxis: string, val: number | undefined) => {
     container.innerHTML = `
     <p class="x-value">${xAxis}</p>
     <div class="tooltip-body">
-      <i class="badge"></i>
-      <p class="num">${val}</p>
-    </div>`
+        <i class="badge3"></i>
+        <p class="num">${val}</p>
+    </div>
+    <div class="tooltip-body">
+        <i class="badge4"></i>
+        <p class="num">${val2}</p>
+    </div>
+    `
   }
   return container
 }
 
 const props = defineProps({
+
   value: {
-    type: Object,
-    default: () => ({ x: [], y: [] }),
+    type: Array as any,
+    default: () => ([{ x: [], y: [] }]),
     required: false,
   },
   color: {
-    type: String,
-    default: '#975fe4',
+    type: Array,
+    default: () => ['#3D7FF9', '#88a56c'],
   },
   type: {
     type: String,
@@ -62,9 +68,8 @@ const props = defineProps({
 
 const chartEl = ref()
 let chartInstance: ECharts | null = null
-
 const option: EChartsOption = reactive({
-  color: [props.color],
+  color: ['#3D7FF9', '#88a56c'],
   grid: {
     left: 0, // default 80px
     top: 0, // default 60px
@@ -73,21 +78,31 @@ const option: EChartsOption = reactive({
   },
   tooltip: {
     trigger: 'axis',
-    confine: true,
     axisPointer: {
       type: 'none',
-    },
-    formatter: (params: Array<any>) => {
-      if (!params[0]) {
-        return ''
+      label: {
+        backgroundColor: '#6a7985'
       }
-      const { axisValue, value } = params[0]
-      return createTooltip(axisValue, value)
-    },
+    }
+
+    // trigger: 'axis',
+    // confine: true,
+    // axisPointer: {
+    //   type: 'none',
+    // },
+    // formatter: (params: Array<any>) => {
+    //   console.log('params', params)
+    //   if (!params[0] && !params[1]) {
+    //     return ''
+    //   }
+    //   const { axisValue, value } = params[0]
+    //   const { value: value2 } = params[1]
+    //   return createTooltip(axisValue, value, value2)
+    // },
   },
   xAxis: {
     type: 'category',
-    data: props.value.x,
+    data: props.value[0].x,
     triggerEvent: true,
     axisLine: {
       show: false,
@@ -99,21 +114,24 @@ const option: EChartsOption = reactive({
       show: false,
     },
   },
-  yAxis: {
-    type: 'value',
-    splitLine: {
-      show: false,
+  yAxis: [
+    {
+      type: 'value',
+      splitLine: {
+        show: false,
+      },
+      axisLine: {
+        show: false,
+      },
+      axisTick: {
+        show: false,
+      },
+      axisLabel: {
+        show: false,
+      },
     },
-    axisLine: {
-      show: false,
-    },
-    axisTick: {
-      show: false,
-    },
-    axisLabel: {
-      show: false,
-    },
-  },
+  ],
+
   series: [],
 })
 
@@ -133,17 +151,17 @@ watch(
 
 const { addListener, removeListener } = useEchartResize()
 const setSeriesConfig = async () => {
-  console.log('RateChart setSeriesConfig', props.value.y)
+  console.log('RateChart setSeriesConfig2', props.value[0])
   const { color, type } = props
   option.series = [
     {
-      data: props.value.y,
+      data: props.value[0].y,
       smooth: true,
       type,
       symbolSize: 0,
       lineStyle: {
-        width: 2,
-        color
+        width: 1,
+        color: color[0],
       },
       label: {
         show: false,
@@ -152,14 +170,40 @@ const setSeriesConfig = async () => {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
           {
             offset: 0,
-            color: color,
+            color: color[0],
           },
           {
             offset: 1,
-            color: `${color}00`,
+            color: `${color[0]}00`,
           },
         ]),
-        opacity: 0.3,
+        opacity: 0.4,
+      },
+    },
+    {
+      data: props.value[1].y,
+      smooth: true,
+      type,
+      symbolSize: 0,
+      lineStyle: {
+        width: 1,
+        color: color[1],
+      },
+      label: {
+        show: false,
+      },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: color[1],
+          },
+          {
+            offset: 1,
+            color: `${color[1]}00`,
+          },
+        ]),
+        opacity: 0.4,
       },
     },
   ] as Array<LineSeriesOption>
@@ -205,12 +249,20 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
 
-    .badge {
+    .badge3 {
       display: block;
       width: 10px;
       height: 10px;
       border-radius: 5px;
-      background-color: #975fe4;
+      background-color: '#3D7FF9';
+    }
+
+    .badge4 {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 5px;
+      background-color: '#88a56c';
     }
 
     .num {

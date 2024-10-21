@@ -57,8 +57,18 @@ import { NodeInfo } from '@/types/dashboard'
 import { NodeStatus } from '@/types/enum'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import { ClickOutside as vClickOutside } from 'element-plus'
-import type { ComputedRef, PropType, Ref } from 'vue'
-import { computed, defineEmits, defineProps, nextTick, onMounted, ref, watch } from 'vue'
+import {
+  ComputedRef,
+  PropType,
+  Ref,
+  computed,
+  defineEmits,
+  defineProps,
+  nextTick,
+  onMounted,
+  ref,
+  watch,
+} from 'vue'
 import BackgroundCircle from './BackgroundCircle.vue'
 import CoreNode from './CoreNode.vue'
 import NodeListPopover from './NodeListPopover.vue'

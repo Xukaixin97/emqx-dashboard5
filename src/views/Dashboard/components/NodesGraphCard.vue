@@ -4,7 +4,6 @@
       <div class="nodes-graph-container">
         <span class="node-count">
           <img src="@/assets/img/node.png" width="12" height="12" alt="node" />
-          {{ clusterName ? `${clusterName} -` : '' }}
           {{ $t('Dashboard.node', { n: nodes.length }) }}
         </span>
         <NodesGraph v-model="currentNodeName" :nodes="nodes" v-if="!infoLoading" />
@@ -55,8 +54,10 @@
                 <div class="node-item">
                   <label class="node-item-label">{{ tl('version') }}: </label>
                   <span class="node-item-content">
-                    <a :href="releaseNoteLink" target="_blank">
-                      {{ currentInfo.node['version'] }} ({{ $t(edition.title) }})
+                    <!-- <a :href="releaseNoteLink" target="_blank"> -->
+                    <a  target="_blank">
+                      <!-- {{ currentInfo.node['version'] }} ({{ $t(edition.title) }}) -->
+                      2.1.2
                     </a>
                   </span>
                 </div>
@@ -147,11 +148,7 @@ const { locale } = useI18n()
 const POLLING_INTERVAL = 2000
 
 // const { nodes, loadData: getNodes } = useClusterNodes(false, true, 25000)
-const {
-  nodes,
-  loadData: getNodes,
-  clusterName,
-} = useClusterNodes({
+const { nodes, loadData: getNodes } = useClusterNodes({
   loadByDefault: false,
   hideProgress: true,
   timeout: 25000,

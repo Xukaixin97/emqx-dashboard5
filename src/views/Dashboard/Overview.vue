@@ -1,7 +1,61 @@
 <template>
   <div class="overview app-wrapper">
     <el-row class="block" :gutter="26">
-      <el-col :span="8" :lg="9">
+      <el-col :span="8">
+        <el-row :gutter="24">
+          <el-col :span="24" class="main-info-item">
+            <el-card class="with-multiple-counts">
+              <div class="multiple-counts-wrap">
+                <DonutChart type="pie" :value="[currentMetrics.connections, currentMetrics.live_connections]" />
+                <div class="multiple-counts-legend">
+                  <div>
+                    <router-link class="no-img" :to="{ name: 'clients', query: { conn_state: 'connected' } }"
+                      :style="{ paddingTop: '0' }">
+                      <i class="node-status-dot is-running" :style="{
+      background: '#f0f1f3',
+    }"></i>
+                      <p>{{ $t('Dashboard.allConnections') }}</p>
+                    </router-link>
+                    <div class="num">{{ _formatNumber(currentMetrics.connections) }}</div>
+                  </div>
+                  <div>
+                    <router-link class="no-img" :to="{ name: 'clients', query: { conn_state: 'connected' } }"
+                      :style="{ paddingTop: '0' }">
+                      <i class="node-status-dot is-running"></i>
+                      <p>{{ $t('Dashboard.liveConnections') }}</p>
+                    </router-link>
+                    <div class="num">
+                      {{ _formatNumber(currentMetrics.live_connections) }}
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- <div>
+                  <router-link :to="{ name: 'clients' }">
+                    <div class="img-container">
+                      <img src="@/assets/img/connections.png" width="40" height="40" alt="clients" />
+                    </div>
+                    <p>{{ $t('Dashboard.allConnections') }}</p>
+                  </router-link>
+                  <div class="num">{{ _formatNumber(currentMetrics.connections) }}</div>
+                </div>
+                <div>
+                  <router-link class="no-img" :to="{ name: 'clients', query: { conn_state: 'connected' } }">
+                    <i class="node-status-dot is-running"></i>
+                    <p>{{ $t('Dashboard.liveConnections') }}</p>
+                  </router-link>
+                  <div class="num">
+                    {{ _formatNumber(currentMetrics.live_connections) }}
+                  </div>
+                </div> -->
+
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="8">
         <el-card class="rate-card">
           <!-- <el-radio-group class="rate-type-radio" v-model="rateType" size="small">
             <el-radio-button label="byte" />
@@ -9,23 +63,33 @@
           </el-radio-group> -->
           <template v-if="rateType === 'msg'">
             <div class="rate-item">
-              <div>
-                <label class="rate-label">{{ $t('Dashboard.currentMessageInRate') }}</label>
-                <span class="unit">
-                  {{ $t('Dashboard.strip', { n: currentMetrics.received_msg_rate }) }}/{{
-                    $t('Dashboard.second')
-                  }}
-                </span>
+              <div class="rate-item-title">
+                <div class="rate-item-legned-pub"></div>
+                <div>
+                  <label class="rate-label">{{ $t('Dashboard.currentMessageInRate') }}</label>
+                  <span class="unit">
+                    {{ $t('Dashboard.strip', { n: currentMetrics.received_msg_rate }) }}/{{
+      $t('Dashboard.second')
+    }}
+                  </span>
+                </div>
+                <div class="rate-item-legned-sub"></div>
+                <div>
+                  <label class="rate-label">{{ $t('Dashboard.currentMessageOutRate') }}</label>
+                  <span class="unit">
+                    {{ $t('Dashboard.strip', { n: currentMetrics.sent_msg_rate }) }}/{{
+      $t('Dashboard.second')
+    }}
+                  </span>
+                </div>
               </div>
+
               <div class="line-wrapper">
-                <rate-chart
-                  :value="currentMetricsLogs.received_msg_rate"
-                  type="bar"
-                  color="#3D7FF9"
-                />
+                <RateChartMult type="line"
+                  :value="[currentMetricsLogs.received_msg_rate, currentMetricsLogs.sent_msg_rate]" />
               </div>
             </div>
-            <div class="rate-item">
+            <!-- <div class="rate-item">
               <div>
                 <label class="rate-label">{{ $t('Dashboard.currentMessageOutRate') }}</label>
                 <span class="unit">
@@ -35,9 +99,9 @@
                 </span>
               </div>
               <div class="line-wrapper">
-                <rate-chart :value="currentMetricsLogs.sent_msg_rate" type="bar" color="#5D4EFF" />
+                <rate-chart :value="currentMetricsLogs.sent_msg_rate" type="line" color="#0B9541" />
               </div>
-            </div>
+            </div> -->
           </template>
           <template v-else>
             <div class="rate-item">
@@ -47,11 +111,7 @@
                 <span class="unit">{{ $t('Dashboard.byte') }}/{{ $t('Dashboard.second') }}</span>
               </div>
               <div class="line-wrapper">
-                <rate-chart
-                  :value="currentMetricsLogs.received_bytes_rate"
-                  type="bar"
-                  color="#3D7FF9"
-                />
+                <rate-chart :value="currentMetricsLogs.received_bytes_rate" type="bar" color="#3D7FF9" />
               </div>
             </div>
             <div class="rate-item">
@@ -61,78 +121,51 @@
                 <span class="unit">{{ $t('Dashboard.byte') }}/{{ $t('Dashboard.second') }}</span>
               </div>
               <div class="line-wrapper">
-                <rate-chart
-                  :value="currentMetricsLogs.sent_bytes_rate"
-                  type="bar"
-                  color="#5D4EFF"
-                />
+                <rate-chart :value="currentMetricsLogs.sent_bytes_rate" type="bar" color="#0B9541" />
               </div>
             </div>
           </template>
         </el-card>
       </el-col>
-      <el-col :span="16" :lg="15">
-        <el-row :gutter="24">
-          <el-col :span="12" class="main-info-item">
-            <el-card class="with-multiple-counts">
-              <div class="multiple-counts-wrap">
-                <div>
-                  <router-link :to="{ name: 'clients' }">
-                    <div class="img-container">
-                      <img
-                        src="@/assets/img/connections.png"
-                        width="40"
-                        height="40"
-                        alt="clients"
-                      />
-                    </div>
-                    <p>{{ $t('Dashboard.allConnections') }}</p>
-                  </router-link>
-                  <div class="num">{{ _formatNumber(currentMetrics.connections) }}</div>
-                </div>
-                <div>
-                  <router-link
-                    class="no-img"
-                    :to="{ name: 'clients', query: { conn_state: 'connected' } }"
-                  >
-                    <i class="node-status-dot is-running"></i>
-                    <p>{{ $t('Dashboard.liveConnections') }}</p>
-                  </router-link>
-                  <div class="num">
-                    {{ _formatNumber(currentMetrics.live_connections) }}
-                  </div>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6" class="main-info-item">
-            <el-card>
-              <div>
-                <router-link :to="{ name: 'topics' }">
-                  <div class="img-container">
+      <el-col :span="4" class="main-info-item">
+        <el-card>
+          <div :style="{
+      textAlign: 'center',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }">
+            <router-link :to="{ name: 'topics' }">
+              <!-- <div class="img-container">
                     <img src="@/assets/img/topics.png" width="40" height="40" alt="topics" />
-                  </div>
-                  <p>{{ $t('Dashboard.topics') }}</p>
-                </router-link>
-                <div class="num">{{ _formatNumber(currentMetrics.topics) }}</div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6" class="main-info-item">
-            <el-card>
-              <div>
-                <router-link :to="{ name: 'subscription' }">
-                  <div class="img-container">
-                    <img src="@/assets/img/subs.png" width="40" height="40" alt="subs" />
-                  </div>
-                  <p>{{ $t('Dashboard.subscriptionNumber') }}</p>
-                </router-link>
-                <div class="num">{{ _formatNumber(currentMetrics.subscriptions) }}</div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
+                  </div> -->
+              <p>{{ $t('Dashboard.topics') }}</p>
+            </router-link>
+            <div class="num">{{ _formatNumber(currentMetrics.topics) }}</div>
+          </div>
+        </el-card>
       </el-col>
+      <el-col :span="4" class="main-info-item">
+        <el-card>
+          <div :style="{
+      textAlign: 'center',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }">
+            <router-link :to="{ name: 'subscription' }">
+              <!-- <div class="img-container">
+                    <img src="@/assets/img/subs.png" width="40" height="40" alt="subs" />
+                  </div> -->
+              <p>{{ $t('Dashboard.subscriptionNumber') }}</p>
+            </router-link>
+            <div class="num">{{ _formatNumber(currentMetrics.subscriptions) }}</div>
+          </div>
+        </el-card>
+      </el-col>
+
     </el-row>
     <el-card class="cluster-card block allow-overflow">
       <NodesGraphCard />
@@ -152,6 +185,8 @@ export default defineComponent({
 <script setup lang="ts">
 import { ref, reactive, Ref } from 'vue'
 import RateChart from './components/RateChart.vue'
+import DonutChart from './components/DonutChart.vue'
+import RateChartMult from './components/RateChartMult.vue'
 import PolylineCards from './components/PolylineCards.vue'
 import NodesGraphCard from './components/NodesGraphCard.vue'
 import Moment from 'moment'
@@ -234,41 +269,71 @@ syncPolling(loadData, POLLING_INTERVAL)
     margin-top: 14px;
     margin-bottom: 28px;
   }
+
   .main-info-item {
     height: 195px;
+
     .el-card {
       height: 100%;
+
       &.with-multiple-counts {
         .el-card__body {
-          padding-left: 28px;
+          // padding-left: 28px;
+          padding-left: 0;
+          padding-top: 0;
+          padding: 0;
         }
+
       }
     }
+
     .el-card__body {
       padding-top: 36px;
       padding-left: 32px;
     }
+
     .multiple-counts-wrap {
       display: flex;
+      width: 100%;
+
       // justify-content: space-around;
       div:not(:last-child) {
         margin-right: 48px;
       }
+
+      .donut-chart {
+        box-sizing: border-box;
+        height: 180px;
+        width: 180px;
+        margin-top: 8px;
+        margin-left: 60px;
+      }
+
+      .multiple-counts-legend {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
     }
+
     a {
       display: block;
       font-size: 16px;
       color: var(--color-text-secondary);
       transition: none;
+
       &:hover {
         color: var(--color-primary);
+
         img {
           filter: saturate(65%) contrast(135%);
         }
       }
+
       .img-container {
         line-height: 0;
       }
+
       &.no-img {
         // img size
         padding-top: 40px;
@@ -277,48 +342,85 @@ syncPolling(loadData, POLLING_INTERVAL)
         align-items: center;
       }
     }
+
     .node-status-dot {
       margin-right: 4px;
     }
+
     .num {
       color: var(--color-title-primary);
       font-size: 24px;
     }
   }
+
   .rate-card {
     height: 195px;
+
     .el-card__body {
       height: 100%;
+
       .rate-item {
-        height: 50%;
+        height: 100%;
         margin-bottom: 8px;
+
+        .rate-item-title {
+          display: flex;
+          // justify-content: space-between;
+          // gap: 32px;
+          align-items: center;
+          margin-bottom: 16px;
+
+          .rate-item-legned-pub {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background-color: #3D7FF9;
+            margin-right: 8px
+          }
+
+          .rate-item-legned-sub {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background-color: #88a56c;
+            margin-right: 8px;
+            margin-left: 32px
+          }
+        }
       }
     }
+
     .rate-label {
       color: var(--color-text-secondary);
-      padding-right: 10px;
+      padding-right: 0px;
     }
+
     span {
       color: var(--color-text-primary);
     }
+
     .line-wrapper {
       width: 100%;
       box-sizing: border-box;
       margin: 16px 0;
+
       .rate-chart {
         box-sizing: border-box;
-        height: 36px;
+        height: 120px;
       }
     }
+
     .rate-type-radio {
       position: absolute;
       right: 10px;
       top: 16px;
     }
   }
+
   .cluster-card {
     border: none;
     border-radius: 8px;
+
     .el-card__body {
       padding: 0px;
     }

@@ -34,15 +34,18 @@ const updateThemeState = (theme: string) => {
 // Sync OS theme
 const hadleSyncOSTheme = () => {
   if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    updateThemeState('dark')
+    // updateThemeState('dark')
+    updateThemeState('light')
   } else {
     updateThemeState('light')
   }
+  
 }
 // Watch the OS theme change
 const setWatchOSTheme = () => {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-    const osTheme = event.matches ? 'dark' : 'light'
+    // const osTheme = event.matches ? 'dark' : 'light'
+    const osTheme =  'light'
     if (store.state.syncOsTheme && osTheme !== theme.value) {
       updateThemeState(osTheme)
     }

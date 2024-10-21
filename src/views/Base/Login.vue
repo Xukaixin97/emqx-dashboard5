@@ -1,20 +1,20 @@
 <template>
   <div class="login">
     <el-row v-if="!showChangePwdForm">
-      <el-col class="intro" :span="8">
+      <el-col class="intro" :span="14">
         <div class="content">
-          <img class="dashboard-img" :src="loginBgBanner" width="369" alt="emqx-dashboard" />
-          <div class="cloud-list">
+          <img class="dashboard-img" :src="loginBgBanner" width="769" alt="emqx-dashboard" />
+          <!-- <div class="cloud-list">
             <a :href="docMap.cloud" target="_blank" rel="noopener noreferrer">
               <img src="@/assets/img/aws.png" width="32" height="32" alt="aws" />
               <img src="@/assets/img/kubernetes.png" width="32" height="32" alt="kubernetes" />
               <img src="@/assets/img/azure.png" width="32" height="32" alt="azure" />
               <img src="@/assets/img/gcp.png" width="32" height="32" alt="gcp" />
             </a>
-          </div>
+          </div> -->
         </div>
       </el-col>
-      <el-col class="form" :span="16">
+      <el-col class="form" :span="10">
         <!-- Local Login -->
         <div v-if="currentLoginBackend === 'local'" class="login-wrapper local-login">
           <div class="form-hd">
@@ -326,11 +326,14 @@ const queryLogin = async ({ username, password }: { username: string; password: 
     const res = await loginApi({ username, password })
     isUsingDefaultPwd.value = password === DEFAULT_PWD && ADMIN_USERNAMES.includes(username)
     updateStoreInfo(username, res)
-    if (!isUsingDefaultPwd.value) {
-      redirectToDashboard()
-    } else {
-      showChangePwdForm.value = true
-    }
+
+    redirectToDashboard()
+
+    // if (!isUsingDefaultPwd.value) {
+    //   redirectToDashboard()
+    // } else {
+    //   showChangePwdForm.value = true
+    // }
     return Promise.resolve({ username, response: res })
   } catch (error) {
     return Promise.reject(error)
@@ -439,6 +442,7 @@ const submitNewPwd = async () => {
         top: 0;
         bottom: 60px;
         width: 100%;
+        height: 100%;
         .cloud-list {
           display: flex;
           justify-content: center;

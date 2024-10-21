@@ -11,16 +11,13 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import type { PropType, Ref } from 'vue'
-import { computed, defineExpose, defineProps, onMounted, ref, watch } from 'vue'
+import { defineProps, ref, watch, onMounted, PropType, Ref, defineExpose, computed } from 'vue'
 import * as echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/line'
 import 'echarts/lib/component/grid'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/toolbox'
-import 'echarts/lib/component/dataZoom'
-import 'echarts/lib/component/legend'
 import useEchartResize from '@/hooks/useEchartResize'
 import useI18nTl from '@/hooks/useI18nTl'
 import { isUndefined } from 'lodash'
@@ -40,9 +37,21 @@ const props = defineProps({
     type: Array as PropType<Array<string>>,
     default: () => [],
   },
+  axisColor: {
+    type: Object,
+    default: () => ({
+      colorAxisLine: '#757575',
+      colorAxisLabel: '#757575',
+    }),
+  },
   chartData: {
     type: Array as PropType<Array<{ xData: Array<number>; yData: Array<number> }>>,
-    default: () => [{ xData: [], yData: [] }],
+    default: () => [
+      {
+        xData: [],
+        yData: [],
+      },
+    ],
   },
   height: {
     type: String,
@@ -52,7 +61,7 @@ const props = defineProps({
     type: Boolean,
   },
   unitTextKey: {
-    type: [String, Array] as PropType<string | Array<string>>,
+    type: String,
   },
   showFullScreen: {
     type: Boolean,
@@ -64,8 +73,6 @@ const store = useStore()
 const theme = computed(() => {
   return store.state.theme
 })
-
-const axisColor = { colorAxisLine: '#757575', colorAxisLabel: '#757575' }
 
 const seriesConfig: Ref<Array<any>> = ref([])
 const chart: Ref<undefined | any> = shallowRef(undefined)
@@ -139,25 +146,17 @@ const _formatTime = (time: string, format = 'YYYY/MM/DD HH:mm') => {
   return Moment(parseInt(time)).format(format)
 }
 
-const createTooltipDataItem = (title: string, color: string, val?: number) => {
-  const item = document.createElement('div')
-  item.className = 'tooltip-data-item'
-  item.innerHTML = `
-  <div>
-    <i class="badge" style="background-color:${color}"></i>
-    <span>${title}</span>
-  </div>
-  ${!isUndefined(val) ? `<p class="num">${val}</p>` : ''}`
-  return item
-}
-
-const createTooltip = (xAxis: string, content: Array<HTMLElement>) => {
+const createTooltip = (xAxis: string, title: string, color: string, val?: number) => {
   const container = document.createElement('div')
   container.innerHTML = `
   <div class="polyline-chart-tooltip">
     <p class="x-value">${_formatTime(xAxis, 'MM/DD HH:mm:ss')}</p>
     <div class="tooltip-body">
-      ${content.map((item) => item.outerHTML).join('')}
+      <div>
+        <i class="badge" style="background-color:${color}"></i>
+        <span>${title}</span>
+      </div>
+      ${!isUndefined(val) ? `<p class="num">${val}</p>` : ''}
     </div>
   </div>
   `
@@ -193,7 +192,6 @@ const drawChart = () => {
       left: 24,
       containLabel: true,
     },
-    legend: props.yTitle.length > 1 ? { top: 4 } : undefined,
     toolbox: {
       feature: {
         saveAsImage: {
@@ -202,7 +200,7 @@ const drawChart = () => {
           name: 'emqx-dashboard',
           emphasis: {
             iconStyle: {
-              borderColor: '#5e4eff',
+              borderColor: '#4ca7a2',
             },
           },
         },
@@ -212,7 +210,7 @@ const drawChart = () => {
           title: '',
           emphasis: {
             iconStyle: {
-              borderColor: '#5e4eff',
+              borderColor: '#4ca7a2',
             },
           },
         },
@@ -243,49 +241,38 @@ const drawChart = () => {
         if (!params[0]) {
           return ''
         }
-        const dataItemArr = params.reduce(
-          (arr, { axisValue, color, seriesName, value, dataIndex }, index) => {
-            let valueShowInTooltip = value
-            const isNoData = noYAxisDataMap[seriesName]?.includes(axisValue)
-            if (isNoData) {
-              valueShowInTooltip = 'NaN'
-            }
-            if (!props.unitTextKey) {
-              arr.push(createTooltipDataItem(seriesName, color, valueShowInTooltip))
-            } else {
-              let title = ''
-              const interval = getInterval(dataIndex)
-              const unitTextKey: string = Array.isArray(props.unitTextKey)
-                ? props.unitTextKey[index]
-                : props.unitTextKey
-              if (!props.isInstantaneousValue && interval) {
-                title = t(unitTextKey, { interval: interval / 1000, n: value })
-              } else {
-                title = isNoData ? t(unitTextKey, { n: 0 }) : t(unitTextKey, { n: value })
-              }
-              arr.push(createTooltipDataItem(title, color))
-            }
-            return arr
-          },
-          [],
-        )
-        return createTooltip(params[0].axisValue, dataItemArr)
+        const { axisValue, color, seriesName, value, dataIndex } = params[0]
+        let valueShowInTooltip = value
+        const isNoData = noYAxisDataMap[seriesName]?.includes(axisValue)
+        if (isNoData) {
+          valueShowInTooltip = 'NaN'
+        }
+        if (!props.unitTextKey) {
+          return createTooltip(axisValue, seriesName, color, valueShowInTooltip)
+        }
+        let title = ''
+        const interval = getInterval(dataIndex)
+        if (!props.isInstantaneousValue && interval) {
+          title = t(props.unitTextKey, { interval: interval / 1000, n: value })
+        } else {
+          title = isNoData ? t(props.unitTextKey, { n: 0 }) : t(props.unitTextKey, { n: value })
+        }
+        return createTooltip(axisValue, title, color)
       },
     },
-    dataZoom: props.showFullScreen ? [{ type: 'inside' }, { type: 'slider' }] : undefined,
     xAxis: {
       type: 'category',
       boundaryGap: false,
       data: props.chartData[0].xData,
       axisLine: {
         lineStyle: {
-          color: axisColor.colorAxisLine,
+          color: props.axisColor.colorAxisLine,
         },
       },
       axisLabel: {
         hideOverlap: true,
         showMinLabel: true,
-        color: axisColor.colorAxisLabel,
+        color: props.axisColor.colorAxisLabel,
         formatter(value: string) {
           return `${_formatTime(value, 'MM/DD')} ${_formatTime(value, 'HH:mm')}`
         },
@@ -298,14 +285,14 @@ const drawChart = () => {
       type: 'value',
       axisLine: {
         lineStyle: {
-          color: axisColor.colorAxisLine,
+          color: props.axisColor.colorAxisLine,
         },
       },
       splitLine: {
         show: props.showFullScreen,
       },
       axisLabel: {
-        color: axisColor.colorAxisLabel,
+        color: props.axisColor.colorAxisLabel,
       },
       minInterval: 1,
     },
@@ -325,7 +312,7 @@ const drawChart = () => {
   .x-value {
     margin-bottom: 4px;
   }
-  .tooltip-data-item {
+  .tooltip-body {
     display: flex;
     justify-content: space-between;
     .badge {

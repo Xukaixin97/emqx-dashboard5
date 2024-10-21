@@ -8,7 +8,7 @@ const getVersion = () => {
 process.env.VUE_APP_EMQX_VERSION = getVersion()
 
 const { HOST_URL } = process.env
-const target = HOST_URL || 'http://localhost:18083/'
+const target = HOST_URL || 'http://36.138.144.212:18083/'
 
 module.exports = {
   devServer: {

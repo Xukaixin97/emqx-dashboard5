@@ -28,7 +28,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
+        <!-- <el-col :span="24">
           <el-form-item>
             <template #label>
               <FormItemLabel :label="tl('syncOsTheme')" :desc="tl('syncOsThemeTip')" />
@@ -50,7 +50,7 @@
               />
             </el-select>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col v-if="!IS_ENTERPRISE" :span="24">
           <el-form-item>
             <template #label>
@@ -74,8 +74,15 @@
 </template>
 
 <script lang="ts">
-import type { WritableComputedRef } from 'vue'
-import { computed, defineComponent, defineEmits, defineProps, reactive, ref } from 'vue'
+import {
+  WritableComputedRef,
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  defineProps,
+  defineEmits,
+} from 'vue'
 
 export default defineComponent({
   name: 'Settings',

@@ -624,7 +624,7 @@ loadSubs()
     &.client-session {
       &.top-border {
         &:before {
-          background: linear-gradient(33deg, #9a66ff 0%, #3651ec 100%);
+          background: linear-gradient(135deg, #00b173 0%, #009580 100%);
         }
       }
     }
@@ -634,16 +634,20 @@ loadSubs()
       &.top-border.packets {
         &:before {
           background: #3d7ff9;
+          background: linear-gradient(135deg, #00b173 0%, #009580 100%);
+
         }
       }
       &.top-border.messages {
         &:before {
           background: #bf73ff;
+          background: linear-gradient(135deg, #00b173 0%, #009580 100%);
         }
       }
       &.top-border.bytes {
         &:before {
           background: #f49845;
+          background: linear-gradient(135deg, #00b173 0%, #009580 100%);
         }
       }
     }
